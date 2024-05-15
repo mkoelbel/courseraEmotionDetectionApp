@@ -7,16 +7,26 @@ def emotion_detector(text_to_analyze):
     myobj = { "raw_document": { "text": text_to_analyze } }
 
     response = requests.post(url, json=myobj, headers=header)
-    emotion_dict = json.loads(response.text)["emotionPredictions"][0]["emotion"]
 
-    dict_to_return = {
-        "anger_score": emotion_dict["anger"],
-        "disgust_score": emotion_dict["disgust"],
-        "fear_score": emotion_dict["fear"],
-        "joy_score": emotion_dict["joy"],
-        "sadness_score": emotion_dict["sadness"]
-    }
-    dominant_emotion = max(dict_to_return, key=dict_to_return.get).split("_")[0]
-    dict_to_return["dominant_emotion"] = dominant_emotion
+    if response.status_code == 400:
+        dict_to_return = {
+            "anger_score": None,
+            "disgust_score": None,
+            "fear_score": None,
+            "joy_score": None,
+            "sadness_score": None,
+            "dominant_emotion": None
+        }
+    else:
+        emotion_dict = json.loads(response.text)["emotionPredictions"][0]["emotion"]
+        dict_to_return = {
+            "anger_score": emotion_dict["anger"],
+            "disgust_score": emotion_dict["disgust"],
+            "fear_score": emotion_dict["fear"],
+            "joy_score": emotion_dict["joy"],
+            "sadness_score": emotion_dict["sadness"]
+        }
+        dominant_emotion = max(dict_to_return, key=dict_to_return.get).split("_")[0]
+        dict_to_return["dominant_emotion"] = dominant_emotion
     
     return dict_to_return
