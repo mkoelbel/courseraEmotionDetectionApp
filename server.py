@@ -16,26 +16,17 @@ def sent_detector():
     """
     text_to_analyze = request.args.get("textToAnalyze")
     emotion_dict = emotion_detector(text_to_analyze)
-
-    if emotion_dict["dominant_emotion"] is None:
-        return "Invalid text! Please try again!"
-
-    anger_score = emotion_dict["anger_score"]
-    disgust_score = emotion_dict["disgust_score"]
-    fear_score = emotion_dict["fear_score"]
-    joy_score = emotion_dict["joy_score"]
-    sadness_score = emotion_dict["sadness_score"]
     dominant_emotion = emotion_dict["dominant_emotion"]
 
-    string_to_return = (
-        f"For the given statement, the system response is "
-        f"'anger': {anger_score}, "
-        f"'disgust': {disgust_score}, "
-        f"'fear': {fear_score}, "
-        f"'joy': {joy_score} and "
-        f"'sadness': {sadness_score}. "
-        f"The dominant emotion is {dominant_emotion}."
-    )
+    if dominant_emotion is None:
+        string_to_return = "Invalid text! Please try again!"
+    else:
+        string_list = [f"'{emotion}': {score}" for (emotion, score) in emotion_dict.items() if emotion != "dominant_emotion"]
+        string_top = string_list[:-1]
+        string_last_element = string_list[-1]
+        emotions_score_string = f"{', '.join(string_top)}, and {string_last_element}"
+        string_to_return = f"For the given statement, the system response is {emotions_score_string}.\
+                             The dominant emotion is {dominant_emotion}."
 
     return string_to_return
 

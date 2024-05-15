@@ -19,14 +19,7 @@ def emotion_detector(text_to_analyze):
         }
     else:
         emotion_dict = json.loads(response.text)["emotionPredictions"][0]["emotion"]
-        dict_to_return = {
-            "anger_score": emotion_dict["anger"],
-            "disgust_score": emotion_dict["disgust"],
-            "fear_score": emotion_dict["fear"],
-            "joy_score": emotion_dict["joy"],
-            "sadness_score": emotion_dict["sadness"]
-        }
-        dominant_emotion = max(dict_to_return, key=dict_to_return.get).split("_")[0]
-        dict_to_return["dominant_emotion"] = dominant_emotion
+        dict_to_return = emotion_dict
+        dict_to_return["dominant_emotion"] = max(emotion_dict, key=emotion_dict.get)
     
     return dict_to_return
